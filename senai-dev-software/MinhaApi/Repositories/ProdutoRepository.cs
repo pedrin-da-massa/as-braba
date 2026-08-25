@@ -1,3 +1,5 @@
+using MinhaApi.Models;
+namespace MinhaApi.Repositories;
 public class ProdutoRepository
     : IProdutoRepository
 {

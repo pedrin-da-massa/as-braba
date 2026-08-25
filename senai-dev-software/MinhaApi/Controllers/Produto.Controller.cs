@@ -2,82 +2,87 @@ using MinhaApi.Models;
 using MinhaApi.Services;
 using Microsoft.AspNetCore.Mvc;
 
+namespace MinhaApi.Controllers;
+
 [ApiController]
 [Route("api/[controller]")]
-public class ProdutoController
-    : ControllerBase
+public class ProdutoController : ControllerBase
 {
     private readonly IProdutoService _service;
 
-    public ProdutoController(
-        IProdutoService service)
-        => _service = service;
+    public ProdutoController(IProdutoService service)
+    {
+        _service = service;
+    }
 
-    // GET /api/produto
+    // GET: api/produto
+    // Lista todos os produtos
     [HttpGet]
     public IActionResult GetAll()
     {
         var produtos = _service.GetAll();
+
         return Ok(produtos);
     }
 
-    // GET /api/produto/1
+    // GET: api/produto/1
+    // Busca um produto pelo ID
     [HttpGet("{id}")]
     public IActionResult GetById(int id)
     {
         var produto = _service.GetById(id);
+
         if (produto == null)
             return NotFound();
+
         return Ok(produto);
     }
-}
 
-// POST /api/produto
-[HttpPost]
-public IActionResult Create(
-    [FromBody] Produto produto)
-{
-    if (!ModelState.IsValid)
-        return BadRequest(ModelState);
+    // POST: api/produto
+    // Cria um novo produto
+    [HttpPost]
+    public IActionResult Create([FromBody] Produto produto)
+    {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
 
-    var criado = _service.Create(produto);
+        var criado = _service.Create(produto);
 
-    return CreatedAtAction(
-        nameof(GetById),
-        new { id = criado.Id },
-        criado);
-}
+        return CreatedAtAction(
+            nameof(GetById),
+            new { id = criado.Id },
+            criado
+        );
+    }
 
+    // PUT: api/produto/1
+    // Atualiza um produto existente
+    [HttpPut("{id}")]
+    public IActionResult Update(
+        int id,
+        [FromBody] Produto produto)
+    {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
 
-{
-  "nome": "Notebook",
-  "preco": 2500.00,
-  "estoque": 10
-}
+        var atualizado = _service.Update(id, produto);
 
-// PUT /api/produto/1
-[HttpPut("{id}")]
-public IActionResult Update(
-    int id,
-    [FromBody] Produto produto)
-{
-    var atualizado =
-        _service.Update(id, produto);
+        if (atualizado == null)
+            return NotFound();
 
-    if (atualizado == null)
-        return NotFound();
+        return Ok(atualizado);
+    }
 
-    return Ok(atualizado);
-}
+    // DELETE: api/produto/1
+    // Exclui um produto
+    [HttpDelete("{id}")]
+    public IActionResult Delete(int id)
+    {
+        var deletado = _service.Delete(id);
 
-// DELETE /api/produto/1
-[HttpDelete("{id}")]
-public IActionResult Delete(int id)
-{
-    var deletado = _service.Delete(id);
+        if (!deletado)
+            return NotFound();
 
-    if (!deletado)
-        return NotFound();
-
-    return NoContent();
+        return NoContent();
+    }
 }
