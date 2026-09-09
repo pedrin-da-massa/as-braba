@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Aluno SENAI\\Desktop\\as braba\\senai-dev-software\\MinhaApi\\MinhaApi.csproj": {}
+    "c:\\Users\\Aluno SENAI\\Desktop\\as-braba\\as braba\\senai-dev-software\\MinhaApi\\MinhaApi.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Aluno SENAI\\Desktop\\as braba\\senai-dev-software\\MinhaApi\\MinhaApi.csproj": {
+    "c:\\Users\\Aluno SENAI\\Desktop\\as-braba\\as braba\\senai-dev-software\\MinhaApi\\MinhaApi.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Aluno SENAI\\Desktop\\as braba\\senai-dev-software\\MinhaApi\\MinhaApi.csproj",
+        "projectUniqueName": "c:\\Users\\Aluno SENAI\\Desktop\\as-braba\\as braba\\senai-dev-software\\MinhaApi\\MinhaApi.csproj",
         "projectName": "MinhaApi",
-        "projectPath": "C:\\Users\\Aluno SENAI\\Desktop\\as braba\\senai-dev-software\\MinhaApi\\MinhaApi.csproj",
+        "projectPath": "c:\\Users\\Aluno SENAI\\Desktop\\as-braba\\as braba\\senai-dev-software\\MinhaApi\\MinhaApi.csproj",
         "packagesPath": "C:\\Users\\Aluno SENAI\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Aluno SENAI\\Desktop\\as braba\\senai-dev-software\\MinhaApi\\obj\\",
+        "outputPath": "c:\\Users\\Aluno SENAI\\Desktop\\as-braba\\as braba\\senai-dev-software\\MinhaApi\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\Aluno SENAI\\AppData\\Roaming\\NuGet\\NuGet.Config"

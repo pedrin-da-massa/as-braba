@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "saq0ij9bD90=",
+  "dgSpecHash": "TAHkBBiC5a0=",
   "success": true,
-  "projectFilePath": "C:\\Users\\Aluno SENAI\\Desktop\\as braba\\senai-dev-software\\MinhaApi\\MinhaApi.csproj",
+  "projectFilePath": "c:\\Users\\Aluno SENAI\\Desktop\\as-braba\\as braba\\senai-dev-software\\MinhaApi\\MinhaApi.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Aluno SENAI\\.nuget\\packages\\microsoft.aspnetcore.openapi\\8.0.22\\microsoft.aspnetcore.openapi.8.0.22.nupkg.sha512",
     "C:\\Users\\Aluno SENAI\\.nuget\\packages\\microsoft.extensions.apidescription.server\\6.0.5\\microsoft.extensions.apidescription.server.6.0.5.nupkg.sha512",
