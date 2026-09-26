@@ -1,4 +1,5 @@
 using MinhaApi.Models;
+using MinhaApi.Repositories;
 using MySqlConnector;
 
 namespace MinhaApi.Repositories;
@@ -129,4 +130,27 @@ public class ProdutoRepository : IProdutoRepository
 
         cmd.ExecuteNonQuery();
     }
+
+
+public bool BaixarEstoque(int id, int quantidade)
+{
+    using var conn = new MySqlConnection(_connectionString);
+    conn.Open();
+
+    string sql = @"
+        UPDATE produtos
+        SET estoque = estoque - @Quantidade
+        WHERE id = @Id
+          AND estoque >= @Quantidade
+          AND ativo = true";
+
+    using var cmd = new MySqlCommand(sql, conn);
+
+    cmd.Parameters.AddWithValue("@Id", id);
+    cmd.Parameters.AddWithValue("@Quantidade", quantidade);
+
+    int linhasAfetadas = cmd.ExecuteNonQuery();
+
+    return linhasAfetadas > 0;
+}
 }

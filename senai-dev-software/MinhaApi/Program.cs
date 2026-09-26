@@ -3,10 +3,8 @@ using MinhaApi.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Adiciona os Controllers
 builder.Services.AddControllers();
 
-// Adiciona suporte ao Swagger
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -42,17 +40,30 @@ builder.Services.AddScoped<
     IClienteService,
     ClienteService>();
 
+// ===============================
+// REPOSITORY - VENDA
+// ===============================
+
+builder.Services.AddScoped<
+    IVendaRepository,
+    VendaRepository>();
+
+// ===============================
+// SERVICE - VENDA
+// ===============================
+
+builder.Services.AddScoped<
+    IVendaService,
+    VendaService>();
+
 var app = builder.Build();
 
-// Configuração do Swagger
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
-// Permite o uso dos Controllers
 app.MapControllers();
 
-// Inicia a aplicação
 app.Run();

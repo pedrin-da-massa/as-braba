@@ -1,4 +1,5 @@
 using MinhaApi.Models;
+using MinhaApi.Repositories;
 using MySqlConnector;
 
 namespace MinhaApi.Repositories;
