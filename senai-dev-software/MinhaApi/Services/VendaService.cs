@@ -1,3 +1,4 @@
+
 using MinhaApi.Models;
 using MinhaApi.Repositories;
 
@@ -21,14 +22,14 @@ public class VendaService : IVendaService
 
     public Venda RealizarVenda(VendaRequest request)
     {
-        // 1. Validar quantidade
+        // Validar a quantidade
         if (request.Quantidade <= 0)
         {
             throw new ArgumentException(
                 "A quantidade deve ser maior que zero.");
         }
 
-        // 2. Buscar cliente
+        // Verificar se o cliente existe
         var cliente = _clienteRepository.GetById(request.ClienteId);
 
         if (cliente == null)
@@ -37,14 +38,13 @@ public class VendaService : IVendaService
                 "Cliente não encontrado.");
         }
 
-        // 3. Verificar se cliente está ativo
         if (!cliente.Ativo)
         {
             throw new ArgumentException(
                 "O cliente está inativo.");
         }
 
-        // 4. Buscar produto
+        // Verificar se o produto existe
         var produto = _produtoRepository.GetById(request.ProdutoId);
 
         if (produto == null)
@@ -53,49 +53,32 @@ public class VendaService : IVendaService
                 "Produto não encontrado.");
         }
 
-        // 5. Verificar se produto está ativo
         if (!produto.Ativo)
         {
             throw new ArgumentException(
                 "O produto está inativo.");
         }
 
-        // 6. Verificar estoque
+        // Verificar se há estoque suficiente
         if (produto.Estoque < request.Quantidade)
         {
             throw new ArgumentException(
                 "Estoque insuficiente para o produto informado.");
         }
 
-        // 7. Calcular valor total
-        decimal valorTotal =
-            produto.Preco * request.Quantidade;
-
-        // 8. Criar venda
+        // Criar a venda e calcular o valor total
         var venda = new Venda
         {
             ClienteId = request.ClienteId,
             ProdutoId = request.ProdutoId,
             Quantidade = request.Quantidade,
             PrecoUnitario = produto.Preco,
-            ValorTotal = valorTotal,
+            ValorTotal = produto.Preco * request.Quantidade,
             DataVenda = DateTime.Now
         };
 
-        // 9. Baixar estoque
-        bool estoqueAtualizado =
-            _produtoRepository.BaixarEstoque(
-                produto.Id,
-                request.Quantidade);
-
-        if (!estoqueAtualizado)
-        {
-            throw new ArgumentException(
-                "Não foi possível atualizar o estoque.");
-        }
-
-        // 10. Salvar venda
-        return _vendaRepository.Add(venda);
+        // Registrar a venda e baixar o estoque na mesma transação
+        return _vendaRepository.RealizarVendaComBaixaEstoque(venda);
     }
 
     public IEnumerable<Venda> GetAll()
@@ -105,6 +88,11 @@ public class VendaService : IVendaService
 
     public Venda? GetById(int id)
     {
+        if (id <= 0)
+        {
+            return null;
+        }
+
         return _vendaRepository.GetById(id);
     }
 }

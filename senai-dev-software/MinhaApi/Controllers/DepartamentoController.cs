@@ -1,81 +1,103 @@
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
-using System.Linq;
+using MinhaApi.Models;
+using MinhaApi.Services;
 
-namespace MinhaApi.Controllers
+namespace MinhaApi.Controllers;
+
+[ApiController]
+[Route("api/[controller]")]
+public class DepartamentoController : ControllerBase
 {
-    [ApiController]
-    [Route("api/[controller]")]
-    public class DepartamentoController : ControllerBase
+    private readonly IDepartamentoService _service;
+
+    public DepartamentoController(IDepartamentoService service)
     {
-        private readonly IDepartamentoRepository _departamentoRepository;
+        _service = service;
+    }
 
-        public DepartamentoController(IDepartamentoRepository departamentoRepository)
+    // GET /api/departamento
+    [HttpGet]
+    public IActionResult GetAll()
+    {
+        return Ok(_service.GetAll());
+    }
+
+    // GET /api/departamento/1
+    [HttpGet("{id:int}")]
+    public IActionResult GetById(int id)
+    {
+        var departamento = _service.GetById(id);
+
+        if (departamento == null)
+            return NotFound();
+
+        return Ok(departamento);
+    }
+
+    // POST /api/departamento
+    [HttpPost]
+    public IActionResult Create([FromBody] Departamento departamento)
+    {
+        try
         {
-            _departamentoRepository = departamentoRepository;
+            var criado = _service.Create(departamento);
+
+            return CreatedAtAction(
+                nameof(GetById),
+                new { id = criado.Id },
+                criado);
         }
-
-        [HttpPost]
-        public IActionResult CreateDepartamento(Departamento departamento)
+        catch (ArgumentException ex)
         {
-            if (string.IsNullOrEmpty(departamento.Nome))
-            {
-                return BadRequest("O campo nome é obrigatório.");
-            }
-
-            if (_departamentoRepository.Exists(departamento.Nome))
-            {
-                return Conflict("Já existe um departamento com este nome.");
-            }
-
-            _departamentoRepository.Add(departamento);
-            return CreatedAtAction(nameof(GetDepartamento), new { id = departamento.Id }, departamento);
+            return BadRequest(ex.Message);
         }
-
-        [HttpGet("{id}")]
-        public ActionResult<Departamento> GetDepartamento(int id)
+        catch (InvalidOperationException ex)
         {
-            var departamento = _departamentoRepository.GetById(id);
-            if (departamento == null || departamento.Ativo == false)
-            {
+            return Conflict(ex.Message);
+        }
+    }
+
+    // PUT /api/departamento/1
+    [HttpPut("{id:int}")]
+    public IActionResult Update(
+        int id,
+        [FromBody] Departamento departamento)
+    {
+        try
+        {
+            var atualizado = _service.Update(id, departamento);
+
+            if (atualizado == null)
                 return NotFound();
-            }
-            return departamento;
+
+            return Ok(atualizado);
         }
-
-        [HttpDelete("{id}")]
-        public IActionResult DeleteDepartamento(int id)
+        catch (ArgumentException ex)
         {
-            var departamento = _departamentoRepository.GetById(id);
-            if (departamento == null || departamento.Ativo == false)
-            {
+            return BadRequest(ex.Message);
+        }
+        catch (InvalidOperationException ex)
+        {
+            return Conflict(ex.Message);
+        }
+    }
+
+    // DELETE /api/departamento/1
+    [HttpDelete("{id:int}")]
+    public IActionResult Delete(int id)
+    {
+        try
+        {
+            var deletado = _service.Delete(id);
+
+            if (!deletado)
                 return NotFound();
-            }
 
-            if (_departamentoRepository.HasActiveFornecedores(id))
-            {
-                return Conflict("Não é permitido desativar um departamento com fornecedores ativos.");
-            }
-
-            departamento.Ativo = false; // Soft delete
-            _departamentoRepository.Update(departamento);
             return NoContent();
         }
-    }
-
-    public class Departamento
-    {
-        public int Id { get; set; }
-        public string Nome { get; set; }
-        public bool Ativo { get; set; } = true;
-    }
-
-    public interface IDepartamentoRepository
-    {
-        void Add(Departamento departamento);
-        Departamento GetById(int id);
-        void Update(Departamento departamento);
-        bool Exists(string nome);
-        bool HasActiveFornecedores(int departamentoId);
+        catch (InvalidOperationException ex)
+        {
+            return Conflict(ex.Message);
+        }
     }
 }

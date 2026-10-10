@@ -1,93 +1,52 @@
+
 using MinhaApi.Repositories;
 using MinhaApi.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// ========================================
-// CONTROLLERS
-// ========================================
-
 builder.Services.AddControllers();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
-// ========================================
-// CORS - PERMITE O REACT ACESSAR A API
-// ========================================
-
+// CORS: permite o frontend local durante o desenvolvimento.
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("ReactPolicy", policy =>
     {
         policy
-            .AllowAnyOrigin()
+            .WithOrigins("http://localhost:5173")
             .AllowAnyHeader()
             .AllowAnyMethod();
     });
 });
 
-// ========================================
-// SWAGGER
-// ========================================
+// Produto
+builder.Services.AddScoped<IProdutoRepository, ProdutoRepository>();
+builder.Services.AddScoped<IProdutoService, ProdutoService>();
 
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+// Cliente
+builder.Services.AddScoped<IClienteRepository, ClienteRepository>();
+builder.Services.AddScoped<IClienteService, ClienteService>();
 
-// ========================================
-// REPOSITORY - PRODUTO
-// ========================================
+// Venda
+builder.Services.AddScoped<IVendaRepository, VendaRepository>();
+builder.Services.AddScoped<IVendaService, VendaService>();
 
-builder.Services.AddScoped<
-    IProdutoRepository,
-    ProdutoRepository>();
+// Fornecedor
+builder.Services.AddScoped<IFornecedorRepository, FornecedorRepository>();
+builder.Services.AddScoped<IFornecedorService, FornecedorService>();
 
-// ========================================
-// SERVICE - PRODUTO
-// ========================================
+// Tipo
+builder.Services.AddScoped<ITipoRepository, TipoRepository>();
+builder.Services.AddScoped<ITipoService, TipoService>();
 
-builder.Services.AddScoped<
-    IProdutoService,
-    ProdutoService>();
+// Repository - Departamento
+builder.Services.AddScoped<IDepartamentoRepository, DepartamentoRepository>();
 
-// ========================================
-// REPOSITORY - CLIENTE
-// ========================================
-
-builder.Services.AddScoped<
-    IClienteRepository,
-    ClienteRepository>();
-
-// ========================================
-// SERVICE - CLIENTE
-// ========================================
-
-builder.Services.AddScoped<
-    IClienteService,
-    ClienteService>();
-
-// ========================================
-// REPOSITORY - VENDA
-// ========================================
-
-builder.Services.AddScoped<
-    IVendaRepository,
-    VendaRepository>();
-
-// ========================================
-// SERVICE - VENDA
-// ========================================
-
-builder.Services.AddScoped<
-    IVendaService,
-    VendaService>();
-
-// ========================================
-// CONSTRÓI A APLICAÇÃO
-// ========================================
+// Service - Departamento
+builder.Services.AddScoped<IDepartamentoService, DepartamentoService>();
 
 var app = builder.Build();
-
-// ========================================
-// SWAGGER
-// ========================================
 
 if (app.Environment.IsDevelopment())
 {
@@ -95,20 +54,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-// ========================================
-// CORS
-// ========================================
-
 app.UseCors("ReactPolicy");
 
-// ========================================
-// CONTROLLERS
-// ========================================
-
 app.MapControllers();
-
-// ========================================
-// INICIA A API
-// ========================================
 
 app.Run();

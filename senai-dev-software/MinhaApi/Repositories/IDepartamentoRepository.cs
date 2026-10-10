@@ -1,15 +1,18 @@
 using MinhaApi.Models;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
-namespace MinhaApi.Repositories
+namespace MinhaApi.Repositories;
+
+public interface IDepartamentoRepository
 {
-    public interface IDepartamentoRepository
-    {
-        Task<IEnumerable<Departamentos>> GetAllAsync();
-        Task<Departamentos> GetByIdAsync(int id);
-        Task<Departamentos> CreateAsync(Departamentos departamento);
-        Task<Departamentos> UpdateAsync(int id, Departamentos departamento);
-        Task<bool> DeleteAsync(int id);
-    }
+    IEnumerable<Departamento> GetAll();
+
+    Departamento? GetById(int id);
+
+    void Add(Departamento departamento);
+
+    void Update(Departamento departamento);
+
+    bool Exists(string nome);
+
+    bool HasActiveFornecedores(int departamentoId);
 }

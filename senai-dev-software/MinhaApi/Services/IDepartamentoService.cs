@@ -1,16 +1,16 @@
-
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using MinhaApi.Models;
 
-namespace MinhaApi.Services
+namespace MinhaApi.Services;
+
+public interface IDepartamentoService
 {
-    public interface IDepartamentoService
-    {
-        Task<IEnumerable<Departamentos>> GetAllDepartamentosAsync();
-        Task<Departamentos> GetDepartamentoByIdAsync(int id);
-        Task AddDepartamentoAsync(Departamentos departamento);
-        Task UpdateDepartamentoAsync(Departamentos departamento);
-        Task DeleteDepartamentoAsync(int id);
-    }
+    IEnumerable<Departamento> GetAll();
+
+    Departamento? GetById(int id);
+
+    Departamento Create(Departamento departamento);
+
+    Departamento? Update(int id, Departamento departamento);
+
+    bool Delete(int id);
 }

@@ -1,36 +1,101 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
+using MinhaApi.Models;
+using MinhaApi.Repositories;
 
-namespace MinhaApi.Services
+namespace MinhaApi.Services;
+
+public class DepartamentoService : IDepartamentoService
 {
-    public class Departamento
+    private readonly IDepartamentoRepository _repository;
+
+    public DepartamentoService(IDepartamentoRepository repository)
     {
-        public string Nome { get; set; }
+        _repository = repository;
     }
 
-    public class DepartamentoService
+    public IEnumerable<Departamento> GetAll()
     {
-        private readonly List<Departamento> _departamentos = new List<Departamento>();
+        return _repository.GetAll();
+    }
 
-        public void AdicionarDepartamento(string nome)
+    public Departamento? GetById(int id)
+    {
+        return _repository.GetById(id);
+    }
+
+    public Departamento Create(Departamento departamento)
+    {
+        if (string.IsNullOrWhiteSpace(departamento.Nome))
         {
-            if (string.IsNullOrWhiteSpace(nome))
-            {
-                throw new ArgumentException("O campo nome é obrigatório.");
-            }
-
-            if (_departamentos.Any(d => d.Nome.Equals(nome, StringComparison.OrdinalIgnoreCase)))
-            {
-                throw new InvalidOperationException("Já existe um departamento com o mesmo nome.");
-            }
-
-            _departamentos.Add(new Departamento { Nome = nome });
+            throw new ArgumentException(
+                "O campo nome é obrigatório.");
         }
 
-        public IEnumerable<Departamento> ObterDepartamentos()
+        departamento.Nome = departamento.Nome.Trim();
+
+        if (_repository.Exists(departamento.Nome))
         {
-            return _departamentos;
+            throw new InvalidOperationException(
+                "Já existe um departamento com este nome.");
         }
+
+        departamento.Ativo = true;
+
+        _repository.Add(departamento);
+
+        return departamento;
+    }
+
+    public Departamento? Update(int id, Departamento departamento)
+    {
+        var existente = _repository.GetById(id);
+
+        if (existente == null)
+            return null;
+
+        if (string.IsNullOrWhiteSpace(departamento.Nome))
+        {
+            throw new ArgumentException(
+                "O campo nome é obrigatório.");
+        }
+
+        departamento.Nome = departamento.Nome.Trim();
+
+        if (!existente.Nome.Equals(
+                departamento.Nome,
+                StringComparison.OrdinalIgnoreCase)
+            && _repository.Exists(departamento.Nome))
+        {
+            throw new InvalidOperationException(
+                "Já existe um departamento com este nome.");
+        }
+
+        existente.Nome = departamento.Nome;
+        existente.Ativo = departamento.Ativo;
+
+        _repository.Update(existente);
+
+        return existente;
+    }
+
+    public bool Delete(int id)
+    {
+        var departamento = _repository.GetById(id);
+
+        if (departamento == null || !departamento.Ativo)
+            return false;
+
+        if (_repository.HasActiveFornecedores(id))
+        {
+            throw new InvalidOperationException(
+                "Não é permitido desativar um departamento " +
+                "com fornecedores ativos.");
+        }
+
+        // Exclusão lógica: o registro continua no banco.
+        departamento.Ativo = false;
+
+        _repository.Update(departamento);
+
+        return true;
     }
 }
